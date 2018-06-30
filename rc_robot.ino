@@ -29,11 +29,13 @@ const byte beginMessage = -127;
 // Joystick
 const int8_t deadzoneRadius = 24;
 const int8_t maxMagnitude = 126; // -128, -127, 127 reserved for serial protocol
+const double straightHalfWidth = 0.2; // 0 < x << pi/2
+const double s1 = PI / 2 - straightHalfWidth;
 const double spinHalfWidth = 0.4; // Offset in radians from 0 and pi in which robot is spinning
                                    // 0 < x << pi/2
 const double m1 = 1 / spinHalfWidth;
-const double m2 = 1 / (PI / 2 - spinHalfWidth);
-const double intercept2 = 1 - PI * m2 / 2;
+const double m2 = 1 / (s1 - spinHalfWidth);
+const double intercept2 = -(m2 * spinHalfWidth);
 
 void setup() {
   Serial.begin(9600);
@@ -126,7 +128,7 @@ double getRamp(double theta) {
   else if (theta <= spinHalfWidth) {
     return m1 * theta - 1;
   }
-  else if (theta <= PI / 2) {
+  else if (theta <= s1) {
     return m2 * theta + intercept2;
   }
   else if (theta <= PI) {
