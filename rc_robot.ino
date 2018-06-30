@@ -33,7 +33,7 @@ const double spinHalfWidth = 0.4; // Offset in radians from 0 and pi in which ro
                                    // 0 < x << pi/2
 const double m1 = 1 / spinHalfWidth;
 const double m2 = 1 / (PI / 2 - spinHalfWidth);
-const double intercept2 = - PI / 2 / m2;
+const double intercept2 = 1 - PI * m2 / 2;
 
 void setup() {
   Serial.begin(9600);
@@ -116,7 +116,7 @@ void setMotorSpeedsFromJoystick(int8_t x, int8_t y) {
 }
 
 // Input: [0, PI]
-// Output: [-1, 1], follows curve segments between (theta, r):
+// Output: [-1, 1], follows straight line segments between (theta, r):
 // (0, -1), (spinHalfWidth, 0), (PI / 2, 1), (PI, 1)
 double getRamp(double theta) {
   if (theta < 0) {
@@ -124,10 +124,10 @@ double getRamp(double theta) {
     return 0;
   }
   else if (theta <= spinHalfWidth) {
-    return -sqrt(1 - pow(m1 * theta, 2));
+    return m1 * theta - 1;
   }
   else if (theta <= PI / 2) {
-    return sqrt(1 - pow(m2 * theta + intercept2, 2));
+    return m2 * theta + intercept2;
   }
   else if (theta <= PI) {
     return 1;
